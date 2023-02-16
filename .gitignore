@@ -1,3 +1,6 @@
+# donnees (tous formats)
+individu_reg.*
+
 # History files
 .Rhistory
 .Rapp.history
