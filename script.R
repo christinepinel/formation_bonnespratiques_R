@@ -12,29 +12,12 @@ library(forcats)
 
 # ENVIRONNEMENT -------------------------
 
+## identifiants ====
 api_token <- yaml::read_yaml("secrets.yaml")$JETON_API
 
-# DEFINITION FONCTIONS -------------------------
+## fonctions ====
+source("functions.R", encoding = "UTF-8")
 
-decennie_a_partir_annee <- function(annee) {
-  return(annee - annee %%
-           10)
-}
-
-fonction_de_stat_agregee <- function(a, b = "moyenne", ...) {
-  if (b == "moyenne") {
-    x <- mean(a, na.rm = TRUE, ...)
-  } else if (b == "ecart-type" || b == "sd") {
-    x <- sd(a, na.rm = TRUE, ...)
-  } else if (b == "variance") {
-    x <- var(a, na.rm = TRUE, ...)
-  }
-  return(x)
-}
-
-fonction_de_stat_agregee(rnorm(10))
-fonction_de_stat_agregee(rnorm(10), "ecart-type")
-fonction_de_stat_agregee(rnorm(10), "variance")
 
 # IMPORT DONNEES ------------------
 
@@ -46,6 +29,7 @@ df <- readr::read_csv2(
     "trans", "ur"
   )
 )
+
 
 # RETRAITEMENT DONNEES -------------------
 
@@ -59,7 +43,7 @@ df$sexe <- df$sexe %>%
 summarise(group_by(df, aged), n())
 
 
-# part d'homme dans chaque cohort
+## part d'homme dans chaque cohort ====
 df %>%
   group_by(aged, sexe) %>%
   summarise(SH_sexe = n()) %>%
@@ -72,7 +56,7 @@ df %>%
              color = "red") +
   coord_cartesian(c(0, 100))
 
-# stats trans par statut
+## stats trans par statut ====
 df2 <- df %>%
   group_by(couple, trans) %>%
   summarise(x = n()) %>%
@@ -83,13 +67,13 @@ df %>%
   filter(sexe == "Homme") %>%
   mutate(aged = as.numeric(aged)) %>%
   pull(aged) %>%
-  fonction_de_stat_agregee()
+  stat_agregee()
 
 df %>%
   filter(sexe == "Femme") %>%
   mutate(aged = as.numeric(aged)) %>%
   pull(aged) %>%
-  fonction_de_stat_agregee()
+  stat_agregee()
 
 
 # GRAPHIQUES -----------
@@ -106,7 +90,6 @@ ggsave("p.png", p)
 
 
 # MODELISATION ---------------------
-
 
 df %>%
   select(surf, cs1, ur, couple, aged) %>%
