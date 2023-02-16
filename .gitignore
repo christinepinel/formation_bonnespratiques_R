@@ -1,6 +1,12 @@
 # donnees (tous formats)
 individu_reg.*
 
+# nettoyeur
+.lintr
+
+# mots de passe
+secrets.yaml
+
 # History files
 .Rhistory
 .Rapp.history
